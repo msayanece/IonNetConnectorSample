@@ -21,4 +21,8 @@ public class MainActivity extends AppCompatActivity {
     public void loadImage(View view) {
         startActivity(new Intent(this,ImageActivity.class));
     }
+
+    public void downloadWithPB(View view) {
+        startActivity(new Intent(this,DownloadWithProgressBar.class));
+    }
 }

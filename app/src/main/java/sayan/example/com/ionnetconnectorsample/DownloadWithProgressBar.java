@@ -29,8 +29,7 @@ public class DownloadWithProgressBar extends AppCompatActivity {
 
     //create the progress bar object
     private ProgressBar createProgressBar(){
-        final ProgressBar dlg = (ProgressBar) findViewById(R.id.indeterminateBar);
-        return dlg;
+        return (ProgressBar) findViewById(R.id.indeterminateBar);
     }
 
     //create the progressDialog object

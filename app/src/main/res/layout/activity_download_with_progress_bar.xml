@@ -8,7 +8,7 @@
     tools:context="sayan.example.com.ionnetconnectorsample.DownloadWithProgressBar">
     <ProgressBar
         android:id="@+id/indeterminateBar"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="20dp"
         android:layout_marginTop="1dp"
         style="@android:style/Widget.ProgressBar.Horizontal"

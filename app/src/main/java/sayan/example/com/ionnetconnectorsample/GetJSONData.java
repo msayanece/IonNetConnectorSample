@@ -25,6 +25,33 @@ import sayan.example.com.ionnetconnectorsample.pojos.UserDetails;
 
 public class GetJSONData extends AppCompatActivity {
 
+    TextView textView;
+
+    Gson gsonObject;
+    UserDetails pojo;
+    JsonObject addressJsonObject;
+    JsonArray phoneNumbersJsonArray;
+
+
+    /* the follwong JSON will be returned when Ion library hit the URL...
+
+     {
+    "firstName": "John",
+            "lastName": "Smith",
+            "gender": "man",
+            "age": 32,
+            "address": {
+        "streetAddress": "21 2nd Street",
+                "city": "New York",
+                "state": "NY",
+                "postalCode": "10021"
+    },
+            "phoneNumbers": [
+    { "type": "home", "number": "212 555-1234" },
+    { "type": "fax", "number": "646 555-4567" }
+    ]
+}*/
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,11 +64,24 @@ public class GetJSONData extends AppCompatActivity {
             e.printStackTrace();
         }
 
-        TextView textView = (TextView) findViewById(R.id.textView);
+        textView = (TextView) findViewById(R.id.textView);
         assert result != null;
-        Gson gsonObject = new Gson();
-        UserDetails pojo = gsonObject.fromJson(result, UserDetails.class);
-//        String abb = pojo.getGlossDiv().getGlossList().getGlossEntry().getAbbrev();
+        gsonProcessResultJsonObject(result);
+        postProcessResultJsonElements();
+    }
+
+    //get JSON Objects and Arrays
+    private void gsonProcessResultJsonObject(JsonObject result) {
+        gsonObject = new Gson();
+        pojo = gsonObject.fromJson(result, UserDetails.class);              //The UserDetails (java) Object from the main JsonObject
+        addressJsonObject = pojo.getAddress();                              //Address details JsonObject within the main JsonObject
+        phoneNumbersJsonArray = pojo.getPhoneNumbers();                     //Phone Number details JsonArray within the main JsonObject
+    }
+
+
+    // using the json data set the text filed in the TextView (Post Processing)
+    private void postProcessResultJsonElements() {
+
         textView.setText("Name: "+pojo.getFirstName());
         textView.append(" ");
         textView.append(pojo.getLastName());
@@ -50,10 +90,8 @@ public class GetJSONData extends AppCompatActivity {
         textView.append("\n");
         textView.append("Gender: " + pojo.getGender());
         textView.append("\n");
-        JsonObject addressJsonObject = pojo.getAddress();
-        JsonArray phoneNumbersJsonArray = pojo.getPhoneNumbers();
 
-
+        //The UserAddress (java) Object from the addressJsonObject
         UserAddress address = gsonObject.fromJson(addressJsonObject, UserAddress.class);
         textView.append("\n");
         textView.append("Address");
@@ -68,12 +106,15 @@ public class GetJSONData extends AppCompatActivity {
         textView.append("Street: " + address.getStreetAddress());
         textView.append("\n");
 
+        //The PhoneNumbers ArrayList of JsonObject from phoneNumbersJsonArray
         ArrayList<JsonObject> phoneNumbers = gsonObject.fromJson(phoneNumbersJsonArray, new TypeToken<ArrayList<JsonObject>>(){}.getType());
         textView.append("\n");
         textView.append("Phone Numbers");
         textView.append("\n");
         textView.append("\n");
         for (JsonObject phoneNumber: phoneNumbers) {
+
+            //The PhoneNumber (java) Object from the phoneNumber JsonObject
             PhoneNumber phone = gsonObject.fromJson(phoneNumber, PhoneNumber.class);
             textView.append(phone.getType());
             textView.append(" - ");
@@ -92,6 +133,7 @@ public class GetJSONData extends AppCompatActivity {
         return dlg;
     }
 
+    //get the JsonObject from the server using Ion Library
     private JsonObject getJSON(final Context context, String url, final ProgressDialog dialog) throws ExecutionException, InterruptedException {
         dialog.show();
         Future<JsonObject> resultJSON = Ion.with(context)

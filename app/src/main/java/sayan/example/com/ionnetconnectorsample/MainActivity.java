@@ -25,4 +25,8 @@ public class MainActivity extends AppCompatActivity {
     public void downloadWithPB(View view) {
         startActivity(new Intent(this,DownloadWithProgressBar.class));
     }
+
+    public void loadJSON(View view) {
+        startActivity(new Intent(this,GetJSONData.class));
+    }
 }
